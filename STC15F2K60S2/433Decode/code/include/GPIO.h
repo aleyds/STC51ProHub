@@ -2,18 +2,18 @@
 #define __GPIO_H__
 #include "stc15f2k60s2.h"
 //LED
-sibt  LED_TX=P2^6;  //发送数据指示灯
+sbit  LED_TX=P2^6;  //发送数据指示灯
 sbit  LED_RX=P2^7;  //接收数据指示灯
 
-//TDH6300
-sbit TDH6300_D0=P1^0;
+//TDH6300译码器
+sbit TDH6300_D0=P1^0; //译码输出
 sbit TDH6300_D1=P1^1;
 sbit TDH6300_D2=P1^2;
 sbit TDH6300_D3=P1^3;
 sbit TDH6300_VT=P3^2;//高频接收器RF_IN接收到信号时候  VT输出高电平  D0-D3输出相应的信号给单片机
 
-//EV1527
-sbit EV1527_K0=P2^0;
+//EV1527 编码器
+sbit EV1527_K0=P2^0;  //编码输入
 sbit EV1527_K1=P2^1;
 sbit EV1527_K2=P2^2;
 sbit EV1527_K3=P2^3;

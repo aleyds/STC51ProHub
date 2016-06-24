@@ -1,4 +1,5 @@
 #include "GPIO.h"
+#include "base_type.h"
 #include "intrins.h"
 #include "EEPROM.h"
 
