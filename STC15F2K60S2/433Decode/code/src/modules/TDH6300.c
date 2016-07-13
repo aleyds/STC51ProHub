@@ -1,5 +1,6 @@
 #include "GPIO.h"
 #include "base_type.h"
+#include "uart.h"
 #include <stdarg.h>
 
 void _TDH6300Open(void)
@@ -9,7 +10,10 @@ void _TDH6300Open(void)
 }
 
 void Int0IRQ_Handler() interrupt 0x0
-{
+{	
+	//char xdata print[50] = "TDH6300 VT\n\r";
+
+	
 	if(TDH6300_VT&0x01) //VT为高电平，说明RF_IN有数据
 	{
 		LED_RX = 0; //点亮接收信号灯
@@ -29,5 +33,6 @@ BYTE _TDH6300ReadByte(void)
 		//_ReadByte = P1&0xf;
 		_ReadByte = P1&0xf << 4;
 	}
+	return 0;
 }
 

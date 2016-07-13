@@ -28,7 +28,7 @@ void _UartOpen(void)
 	T2L = (65536 - (SOC_FREQ/4/UART_BAUD));
 	T2H = (65536 - (SOC_FREQ/4/UART_BAUD))>>8;
 	AUXR = 0x14;
-	AUXR1 |= 0x01;
+	AUXR |= 0x01;
 	ES = 1;
 
 }

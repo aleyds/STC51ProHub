@@ -1,8 +1,8 @@
 #ifndef __UART_H__
 #define __UART_H__
 
-#define SOC_FREQ			(18432000L)
-#define UART_BAUD			(115200)
+#define SOC_FREQ			(11051000L)//(18432000L)
+#define UART_BAUD			(9600)
 
 #define NONE_PARITY			(0)
 #define ODD_PARITY			(1)
