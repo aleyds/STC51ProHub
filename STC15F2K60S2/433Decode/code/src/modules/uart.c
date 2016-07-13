@@ -1,9 +1,14 @@
 #include "GPIO.h"
 #include "base_type.h"
 #include <stdarg.h>
+#include "IPCCmd.h"
 #include "uart.h"
 
-static H_U8 g_busy = 0;
+static bit g_busy = 0;
+static bit g_RecvOver = 0;
+static xdata H_U8 g_RecvBuff[8] = { 0 };
+static xdata H_U8 g_RecvIndex = 0;
+
 static void __UartSend(H_U8 _ch);
 
 
@@ -29,16 +34,71 @@ void _UartOpen(void)
 	T2H = (65536 - (SOC_FREQ/4/UART_BAUD))>>8;
 	AUXR = 0x14;
 	AUXR |= 0x01;
+	//AUXR1 |= (0x2<<2);//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
 	ES = 1;
 
 }
 
-void IntUartIRQ_Handler() interrupt 4 using 1
+static void __ClearBuffer(void)
 {
+	memset(g_RecvBuff, 0, sizeof(g_RecvBuff));
+	g_RecvIndex = 0;
+	g_RecvOver = 0;
+}
+
+static void _RecvUart(H_U8 Byte)
+{
+	if(g_RecvOver) //上一次接收的未处理完不接受新数据 
+	{
+		return;
+	}
+	g_RecvBuff[g_RecvIndex] = Byte;
+	if((g_RecvIndex == 0)&&(g_RecvBuff[0] != 0xAA))
+	{
+		__ClearBuffer();
+	}else if((g_RecvIndex == 1)&&(g_RecvBuff[1] != 0x55))
+	{
+		__ClearBuffer();
+	}
+	if((g_RecvIndex >= g_RecvBuff[2]+3) && (g_RecvBuff[g_RecvBuff[2]+2] == 0xFF))
+	{
+		g_RecvOver = 1;
+	}
+	g_RecvIndex++;
+}
+
+void _CommandData(void)
+{
+	if(g_RecvOver)
+	{
+		switch(g_RecvBuff[3])
+		{
+			case 0:
+				_UartPutStr("Study \n\r");
+				__TDH6300Learn();
+				break;
+			case 1:
+				_UartPutStr("Clear \n\r");
+				__TDH6300Clear();
+			    break;
+			default:
+				_UartPutStr("Other: \n\r");
+				_UartPutDec(g_RecvBuff[3]);
+				break;
+		}
+		__ClearBuffer();
+	}
+	
+}
+
+void IntUartIRQ_Handler(void) interrupt 4 
+{
+	H_U8 tmp = 0;
 	if(RI)
 	{
 		RI = 0;
-		__UartSend(SBUF);
+		tmp = SBUF;
+		_RecvUart(tmp);
 	}
 	if(TI)
 	{
@@ -73,7 +133,7 @@ static void __UartSend(H_U8 _ch)
 }
 
 
-static void __UartPutStr(const H_U8 *str)
+void _UartPutStr(const H_U8 *str)
 {
 	while(*str != '\0')
 	{
@@ -81,31 +141,22 @@ static void __UartPutStr(const H_U8 *str)
 	}
 }
 
-static void __UartPutDec(H_U32 dec)
+ void _UartPutDec(H_U32 dec)
 {
 
 	H_U8 buffer[12] = { 0 };
 	sprintf(buffer, "%d", dec);
-	__UartPutStr(buffer);
-}
-
-
-
-static void __UartPutBin(H_U32 bin)
-{
-
-	H_U8 buffer[12] = { 0 };
-	sprintf(buffer, "0x%B", bin);
-	__UartPutStr(buffer);
+	_UartPutStr(buffer);
 }
 
 static void __UartPutHex(H_U32 hex)
 {
 	H_U8 buffer[12] = { 0 };
 	sprintf(buffer, "0x%x", hex);
-	__UartPutStr(buffer);
+	_UartPutStr(buffer);
 }
 
+/*
 void _UartPrintf(H_U8 *fmt, ...)
 {
 
@@ -137,12 +188,6 @@ void _UartPrintf(H_U8 *fmt, ...)
 					vargpch = va_arg(vp, H_U8 *);
 					__UartPutStr(vargpch);
 					break;
-				case 'b':
-				case 'B':
-					vargint = va_arg(vp, H_U32);
-					DATAZERO(vargint);
-					__UartPutBin(vargint);
-					break;
 				case 'x':
 				case 'X':
 					vargint = va_arg(vp, H_U32);
@@ -163,5 +208,5 @@ void _UartPrintf(H_U8 *fmt, ...)
 	va_end(vp);
 
 }
-
+*/
 

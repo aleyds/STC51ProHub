@@ -22,7 +22,7 @@ void _EV1527SendData(BYTE *_pDat, BYTE len)
 	LED_TX = 0;//数据发送灯点亮
 	for(i = 0; i < len; i++)
 	{
-		_EV1527SendByte(*(_pDat+i))
+		_EV1527SendByte(*(_pDat+i));
 	}
 	LED_TX=1;//数据发送灯熄灭
 }

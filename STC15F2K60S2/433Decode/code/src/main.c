@@ -12,17 +12,15 @@
 void main()
 {
 	//char xdata print[] = "Will Come To STC \n\r";
-	int xdata mdta = 0;
 	_TDH6300Open();
 	_UartOpen();
 	EnableAllINT();
 	LED_TX = 1;
 	LED_RX = 1;
-	//_UartPrintf("Will Come To STC \n\r");
+	_UartPutStr("Will Come To STC \n\r");
 	
 	while(1)
 	{
-		_UartPrintf("w:%d\n\r",TDH6300_VT);
-		mdta++;
+		_CommandData();
 	}
 }

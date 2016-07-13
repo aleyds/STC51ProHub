@@ -12,5 +12,9 @@
 
 #define PARITYBIT			(NONE_PARITY)
 void _UartOpen(void);
-void _UartPrintf(H_U8 *fmt, ...);
+void _UartPutStr(const H_U8 *str);
+void _UartPutDec(H_U32 dec);
+void _CommandData(void);
+
+
 #endif

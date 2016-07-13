@@ -3,74 +3,30 @@
 #include "intrins.h"
 #include "IPCCmd.h"
 
-
-bit busy;
-void _IpcOpen(void)
+static void __delay(H_U32 ms)
 {
-	TMOD = TMOD | 0x20;
-	TH1=0xFD; //波特率为9600
-	TL1=0xFD;
-	PCON=0x00;//波特率不倍增
-#if (PARITY_TYPE == PARITY_NONE)
-	SCON = 0x50;
-#elif ((PARITY_TYPE == PARITY_ODD) || (PARITY_TYPE == PARITY_EVEN) || (PARITY_TYPE == PARITY_MARK))
-	SCON = 0xda;
-#elif (PARITY_TYPE == PARITY_SPACE)
-	SCON = 0xd2
-#endif
-	TR1=1;
-	AUXR = 0x14;
-	AUXR |= 0x01;
-	AUXR1 |= 0x40; //切换串口1在P1.6 P1.7上  使用内部时钟
-	ES = 1;
-	EA = 1;
+	H_U32 i = 0;
+	H_U32 j = 0;
+	for(i = ms; i> 0; i--)
+	{
+		for(j = 110; j > 0; j--)
+		{
+			
+		}
+	}
+
 }
 
-static void __SendByte(BYTE dat)
+void __TDH6300Learn(void)
 {
-	while(busy);
-	ACC = dat;
-	if(P)
-	{
-#if (PARITY_TYPE == PARITY_ODD)
-		TB8 = 0;
-#elif (PARITY_TYPE == PARITY_EVEN)
-		TB8 = 1;
-#endif
-	}
-	else 
-	{
-#if (PARITY_TYPE == PARITY_ODD)
-		TB8 = 1;
-#elif (PARITY_TYPE == PARITY_EVEN)
-		TB8 = 0;
-#endif		
-	}
-	busy = 1;
-	SBUF = ACC;
+	LEARNKEY = 1;
+	__delay(500);
+	LEARNKEY = 0;
 }
 
-void _SendData(BYTE *pDat, BYTE len)
+void __TDH6300Clear(void)
 {
-	BYTE i = 0;
-	for(i = 0; i < len; i++)
-	{
-		__SendByte(*(pDat+i));
-	}
+	LEARNKEY = 1;
+	__delay(8000);
+	LEARNKEY = 0;
 }
-
-//串口接收
-static void __UartIRQ_Handler(void) interrupt 4 using 1
-{
-	if(RI)
-	{
-		RI = 0;
-		//数据接收
-	}
-	if(TI)
-	{
-		TI = 0;
-		busy = 0;
-	}
-}
-

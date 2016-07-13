@@ -1,6 +1,8 @@
 #ifndef __BASE_TYPE_H__
 #define __BASE_TYPE_H__
 #include <stdio.h>
+#include <string.h>
+#include "stdlib.h"
 
 typedef unsigned long H_U32;
 typedef unsigned short H_U16;

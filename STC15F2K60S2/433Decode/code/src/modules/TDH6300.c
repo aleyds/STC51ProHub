@@ -13,7 +13,7 @@ void Int0IRQ_Handler() interrupt 0x0
 {	
 	//char xdata print[50] = "TDH6300 VT\n\r";
 
-	
+	_UartPutStr("INT0 IRQ \n\r");
 	if(TDH6300_VT&0x01) //VT为高电平，说明RF_IN有数据
 	{
 		LED_RX = 0; //点亮接收信号灯
