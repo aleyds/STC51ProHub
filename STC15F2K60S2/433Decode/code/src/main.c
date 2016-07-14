@@ -22,5 +22,13 @@ void main()
 	while(1)
 	{
 		_CommandData();
+		if(TDH6300_VT&0x01)
+		{
+			_UartPutStr("111 \n\r");
+		}
+		else
+		{
+			//_UartPutStr("222 \n\r");
+		}
 	}
 }

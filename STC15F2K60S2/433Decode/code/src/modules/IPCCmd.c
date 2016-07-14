@@ -19,14 +19,14 @@ static void __delay(H_U32 ms)
 
 void __TDH6300Learn(void)
 {
-	LEARNKEY = 1;
-	__delay(500);
 	LEARNKEY = 0;
+	__delay(1000);
+	LEARNKEY = 1;
 }
 
 void __TDH6300Clear(void)
 {
-	LEARNKEY = 1;
-	__delay(8000);
 	LEARNKEY = 0;
+	__delay(8000);
+	LEARNKEY = 1;
 }
