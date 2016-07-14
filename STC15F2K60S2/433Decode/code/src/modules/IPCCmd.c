@@ -20,7 +20,7 @@ static void __delay(H_U32 ms)
 void __TDH6300Learn(void)
 {
 	LEARNKEY = 0;
-	__delay(1000);
+	__delay(500);
 	LEARNKEY = 1;
 }
 

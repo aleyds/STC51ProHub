@@ -3,6 +3,8 @@
 #include "uart.h"
 #include <stdarg.h>
 
+static xdata H_U8  g_TDH6300HaveData;
+
 void _TDH6300Open(void)
 {
 	IT0 = 1;
