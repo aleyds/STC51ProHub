@@ -1,7 +1,9 @@
 #include "GPIO.h"
 #include "base_type.h"
+#include "EV1527.h"
 #include <stdarg.h>
 
+extern void _delay(H_U32 ms);
 void _EV1527SendByte(BYTE _Byte)
 {
 	BYTE i = 0;
@@ -20,6 +22,7 @@ void _EV1527SendData(BYTE *_pDat, BYTE len)
 {
 	BYTE i = 0;
 	LED_TX = 0;//数据发送灯点亮
+	_delay(1000);
 	for(i = 0; i < len; i++)
 	{
 		_EV1527SendByte(*(_pDat+i));

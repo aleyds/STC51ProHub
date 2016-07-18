@@ -4,7 +4,7 @@
 #include <stdarg.h>
 
 static xdata H_U8  g_TDH6300HaveData;
-
+extern void _delay(H_U32 ms);
 void _TDH6300Open(void)
 {
 	IT0 = 1;

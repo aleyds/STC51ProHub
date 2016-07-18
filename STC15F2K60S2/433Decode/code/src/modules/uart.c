@@ -36,7 +36,7 @@ void _UartOpen(void)
 	AUXR |= 0x01;
 	//AUXR1 |= (0x2<<2);//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
 	ES = 1;
-
+	g_RecvIndex = 0;
 }
 
 static void __ClearBuffer(void)
@@ -81,6 +81,10 @@ void _CommandData(void)
 				_UartPutStr("Clear \n\r");
 				__TDH6300Clear();
 			    break;
+			 case 2:
+			 	_UartPutStr("EV1527 \n\r");
+			 	_EV1527Test();
+			 	break;
 			default:
 				_UartPutStr("Other: \n\r");
 				_UartPutDec(g_RecvBuff[3]);
