@@ -3,7 +3,21 @@
 #include "EV1527.h"
 #include <stdarg.h>
 
-extern void _delay(H_U32 ms);
+extern void _delay(unsigned long ms);
+
+static void __EV1527Reset(void)
+{
+	EV1527_K0 = 0;
+	EV1527_K1 = 0;
+	EV1527_K2 = 0;
+	EV1527_K3 = 0;
+}
+
+void _Ev1527Open(void)
+{
+	__EV1527Reset();
+}
+
 void _EV1527SendByte(BYTE _Byte)
 {
 	BYTE i = 0;
@@ -28,4 +42,6 @@ void _EV1527SendData(BYTE *_pDat, BYTE len)
 		_EV1527SendByte(*(_pDat+i));
 	}
 	LED_TX=1;//Êý¾Ý·¢ËÍµÆÏ¨Ãð
+
+	__EV1527Reset();
 }

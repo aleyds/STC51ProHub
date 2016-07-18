@@ -4,7 +4,7 @@
 #include <string.h>
 #include "stdlib.h"
 
-typedef unsigned long H_U32;
+typedef unsigned int H_U32;
 typedef unsigned short H_U16;
 typedef unsigned char H_U8;
 typedef long H_S32;

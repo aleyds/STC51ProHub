@@ -3,15 +3,16 @@
 #include "GPIO.h"
 #include "base_type.h"
 #include "TDH6300.h"
+#include "EV1527.h"
 #include "uart.h"
 
 
 #define EnableAllINT()		{EA = 1;}
 
- void _delay(H_U32 ms)
+ void _delay(unsigned long ms)
 {
-	H_U32 i = 0;
-	H_U32 j = 0;
+	unsigned long i = 0;
+	unsigned long j = 0;
 	for(i = ms; i> 0; i--)
 	{
 		for(j = 110; j > 0; j--)
@@ -22,10 +23,22 @@
 
 }
 
+BYTE _VerifyData(BYTE *_Dat, BYTE len)
+{
+	BYTE i = 0;
+	BYTE RetCode = 0;
+	for( i = 0; i < len ; i++)
+	{
+		RetCode ^= _Dat[i];
+	}
+	return RetCode;
+}
+
 void main()
 {
 	//char xdata print[] = "Will Come To STC \n\r";
-	_TDH6300Open();
+	//_TDH6300Open();
+	_Ev1527Open();
 	_UartOpen();
 	EnableAllINT();
 	LED_TX = 1;
@@ -35,6 +48,8 @@ void main()
 	while(1)
 	{
 		_CommandData();
+		_TDH6300Scan();
+		/*
 		if(TDH6300_VT&0x01)
 		{
 			_UartPutStr("111 \n\r");
@@ -42,6 +57,6 @@ void main()
 		else
 		{
 			//_UartPutStr("222 \n\r");
-		}
+		}*/
 	}
 }

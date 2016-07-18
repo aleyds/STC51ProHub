@@ -4,11 +4,12 @@
 #include "IPCCmd.h"
 #include "uart.h"
 
-static bit g_busy = 0;
-static bit g_RecvOver = 0;
+static  bit g_busy = 0;
+static  bit g_RecvOver = 0;
 static xdata H_U8 g_RecvBuff[8] = { 0 };
 static xdata H_U8 g_RecvIndex = 0;
 
+extern BYTE _VerifyData(BYTE *_Dat, BYTE len);
 static void __UartSend(H_U8 _ch);
 
 
@@ -50,6 +51,7 @@ static void _RecvUart(H_U8 Byte)
 {
 	if(g_RecvOver) //上一次接收的未处理完不接受新数据 
 	{
+		//__UartSend(0x11);
 		return;
 	}
 	g_RecvBuff[g_RecvIndex] = Byte;
@@ -60,11 +62,16 @@ static void _RecvUart(H_U8 Byte)
 	{
 		__ClearBuffer();
 	}
-	if((g_RecvIndex >= g_RecvBuff[2]+3) && (g_RecvBuff[g_RecvBuff[2]+2] == 0xFF))
-	{
-		g_RecvOver = 1;
-	}
 	g_RecvIndex++;
+	if((g_RecvIndex) >= (g_RecvBuff[2]+3))
+	{
+		if(_VerifyData(g_RecvBuff, (g_RecvBuff[2]+2)) == g_RecvBuff[g_RecvBuff[2]+2])
+		{
+			g_RecvOver = 1;
+			
+		}
+		
+	}
 }
 
 void _CommandData(void)
@@ -103,6 +110,7 @@ void IntUartIRQ_Handler(void) interrupt 4
 		RI = 0;
 		tmp = SBUF;
 		_RecvUart(tmp);
+		//SBUF = tmp;
 	}
 	if(TI)
 	{
