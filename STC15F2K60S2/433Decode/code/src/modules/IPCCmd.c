@@ -2,6 +2,7 @@
 #include "base_type.h"
 #include "intrins.h"
 #include "EV1527.h"
+#include "uart.h"
 #include "IPCCmd.h"
 
 
@@ -47,7 +48,7 @@ void _IpcBackCmd(const BYTE Type, const BYTE *Data, BYTE _DatLen ,BYTE *_pCmd)
 		}
 	}
 	_pCmd[i+4] = _VerifyData(_pCmd, (_pCmd[2]+2));
-	
+	_UartSendData(_pCmd,(_pCmd[2]+3));
 }
 
 

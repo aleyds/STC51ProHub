@@ -15,6 +15,8 @@ void _UartOpen(void);
 void _UartPutStr(const H_U8 *str);
 void _UartPutDec(H_U32 dec);
 void _CommandData(void);
+void _UartSendData(const BYTE *_pDat, BYTE Len);
+
 
 
 #endif

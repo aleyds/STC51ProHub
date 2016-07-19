@@ -145,6 +145,16 @@ static void __UartSend(H_U8 _ch)
 }
 
 
+void _UartSendData(const BYTE *_pDat, BYTE Len)
+{
+	BYTE i = 0;
+	for(i = 0; i < Len; i++)
+	{
+		__UartSend(*(_pDat + i ));
+	}
+	
+}
+
 void _UartPutStr(const H_U8 *str)
 {
 	while(*str != '\0')
