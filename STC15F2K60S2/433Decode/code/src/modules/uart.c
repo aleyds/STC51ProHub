@@ -74,27 +74,44 @@ static void _RecvUart(H_U8 Byte)
 	}
 }
 
-void _CommandData(void)
+static void __IpcStuParse(_IpcCmd_t *_pIpcCmd)
 {
+	_pIpcCmd->len = g_RecvBuff[2];
+	_pIpcCmd->type = g_RecvBuff[3];
+	memcpy(_pIpcCmd->device_id, &(g_RecvBuff[4]),3);
+	if((_pIpcCmd->len > 5) && (_pIpcCmd->len < 7))
+	{
+		memcpy(_pIpcCmd->data, &(g_RecvBuff[7]),2);
+	}
+}
+
+void _IPCCmdRecv(void)
+{
+	_IpcCmd_t _stIpcCmd;
 	if(g_RecvOver)
 	{
-		switch(g_RecvBuff[3])
+		memset(&_stIpcCmd, 0, sizeof(_IpcCmd_t));
+		__IpcStuParse(&_stIpcCmd);
+		switch(_stIpcCmd.type)
 		{
-			case 0:
+			case _TYPE_6300_LEARN:
 				_UartPutStr("Study \n\r");
 				__TDH6300Learn();
 				break;
-			case 1:
+			case _TYPE_6300_CLEAR:
 				_UartPutStr("Clear \n\r");
 				__TDH6300Clear();
 			    break;
-			 case 2:
+			 case _TYPE_1527_TEST:
 			 	_UartPutStr("EV1527 \n\r");
 			 	_EV1527Test();
 			 	break;
+			 case _TYPE_1527_CONTROL:
+			 	_EV1527Control(_stIpcCmd.device_id,_stIpcCmd.data[0]);
+			 	break;
 			default:
 				_UartPutStr("Other: \n\r");
-				_UartPutDec(g_RecvBuff[3]);
+				_UartPutDec(_stIpcCmd.type);
 				break;
 		}
 		__ClearBuffer();

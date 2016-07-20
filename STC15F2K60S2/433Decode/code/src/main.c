@@ -47,7 +47,7 @@ void main()
 	
 	while(1)
 	{
-		_CommandData();
+		_IPCCmdRecv();
 		_TDH6300Scan();
 		/*
 		if(TDH6300_VT&0x01)

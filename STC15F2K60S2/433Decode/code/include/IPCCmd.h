@@ -5,6 +5,7 @@ typedef enum IPCCmd{
 	_TYPE_6300_LEARN = 0,
 	_TYPE_6300_CLEAR ,
 	_TYPE_1527_TEST,
+	_TYPE_1527_CONTROL,
 }enIPCCmd;
 
 typedef enum IPCBack{
@@ -22,4 +23,5 @@ typedef enum IPCBack{
 void __TDH6300Learn(void);
 void __TDH6300Clear(void);
 void _EV1527Test(void);
+void _EV1527Control(const BYTE *DeviceID, BYTE _Dat);
 #endif

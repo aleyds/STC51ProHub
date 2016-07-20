@@ -27,10 +27,19 @@ void _EV1527Test(void)
 {
 	//BYTE buf[2] = {0x12,0x13};
 	//_EV1527SendData(buf,2);
-	_EV1527Send4Bit(16);
+	_EV1527Send4Bit(0xf);
 }
 
-void _IpcBackCmd(const BYTE Type, const BYTE *Data, BYTE _DatLen ,BYTE *_pCmd)
+void _EV1527Control(const BYTE *DeviceID, BYTE _Dat)
+{
+	BYTE _SendBuf[3] = { 0 };
+	_SendBuf[0] = (DeviceID[0] << 4)|(DeviceID[1] >> 4);
+	_SendBuf[1] = (DeviceID[1] << 4)|(DeviceID[2] >> 4);
+	_SendBuf[2] = (DeviceID[2] << 4)|(_Dat&0xf);
+	_EV1527SendData(_SendBuf, 3);
+}
+
+void _IpcBackCmd(const BYTE Type, const BYTE *DeviceID, const BYTE *Data, BYTE _DatLen ,BYTE *_pCmd)
 {
 	BYTE i = 0;
 	if(_pCmd == H_NULL)
@@ -39,16 +48,18 @@ void _IpcBackCmd(const BYTE Type, const BYTE *Data, BYTE _DatLen ,BYTE *_pCmd)
 	}
 	_pCmd[0] = 0xAA;
 	_pCmd[1] = 0x55;
-	_pCmd[2] = _DatLen+2;
+	_pCmd[2] = _DatLen+5;
 	_pCmd[3] = Type;
+	memcpy(&(_pCmd[4]),DeviceID, 3);
+	
 	if((H_NULL != Data) && (_DatLen > 0 ))
 	{
 		for(i = 0; i < _DatLen; i++)
 		{
-			_pCmd[i+4] = Data[i];
+			_pCmd[i+7] = Data[i];
 		}
 	}
-	_pCmd[i+4] = _VerifyData(_pCmd, (_pCmd[2]+2));
+	_pCmd[i+7] = _VerifyData(_pCmd, (_pCmd[2]+2));
 	_UartSendData(_pCmd,(_pCmd[2]+3));
 }
 
