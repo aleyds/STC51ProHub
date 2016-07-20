@@ -43,11 +43,11 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\debug\obj\</OutputDirectory>
-          <OutputName>433Decode</OutputName>
+          <OutputName>433Control</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
-          <DebugInformation>1</DebugInformation>
+          <DebugInformation>0</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\debug\listing\</ListingPath>
           <HexFormatSelection>0</HexFormatSelection>
