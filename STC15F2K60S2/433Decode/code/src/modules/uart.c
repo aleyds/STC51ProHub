@@ -81,7 +81,7 @@ static void __IpcStuParse(_IpcCmd_t *_pIpcCmd)
 	memcpy(_pIpcCmd->device_id, &(g_RecvBuff[4]),3);
 	if((_pIpcCmd->len > 5) && (_pIpcCmd->len < 7))
 	{
-		memcpy(_pIpcCmd->data, &(g_RecvBuff[7]),2);
+		memcpy(_pIpcCmd->_pdata, &(g_RecvBuff[7]),2);
 	}
 }
 
@@ -107,7 +107,7 @@ void _IPCCmdRecv(void)
 			 	_EV1527Test();
 			 	break;
 			 case _TYPE_1527_CONTROL:
-			 	_EV1527Control(_stIpcCmd.device_id,_stIpcCmd.data[0]);
+			 	_EV1527Control(_stIpcCmd.device_id,_stIpcCmd._pdata[0]);
 			 	break;
 			default:
 				_UartPutStr("Other: \n\r");

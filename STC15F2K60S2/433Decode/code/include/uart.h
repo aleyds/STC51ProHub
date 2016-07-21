@@ -16,7 +16,7 @@ typedef struct _IpcCmd{
 	BYTE len;
 	BYTE type;
 	BYTE device_id[3];
-	BYTE data[2];
+	BYTE _pdata[2];
 }_IpcCmd_t;
 
 void _UartOpen(void);

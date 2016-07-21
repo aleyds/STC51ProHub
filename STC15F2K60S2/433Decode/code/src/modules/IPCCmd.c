@@ -25,9 +25,9 @@ void __TDH6300Clear(void)
 
 void _EV1527Test(void)
 {
-	//BYTE buf[2] = {0x12,0x13};
-	//_EV1527SendData(buf,2);
-	_EV1527Send4Bit(0xf);
+	BYTE buf[2] = {0x12,0x13};
+	_EV1527SendData(buf,2);
+	//_EV1527Send4Bit(0x7);
 }
 
 void _EV1527Control(const BYTE *DeviceID, BYTE _Dat)

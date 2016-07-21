@@ -24,11 +24,10 @@ void _TDH6300Scan(void)
 	if(TDH6300_VT&0x01) //VT为高电平，说明RF_IN有数据
 	{
 		LED_RX = 0; //点亮接收信号灯
-		ReadRFSignal(RecvData);
-		_UartPutDec(0x11);
-		_UartPutDec( RecvData[0]);
-		_UartPutDec( RecvData[1]);
-		_UartPutDec( RecvData[2]);
+		//ReadRFSignal(RecvData);
+		_UartPutDec( P1&0xf);
+		//_UartPutDec( RecvData[1]);
+		//_UartPutDec( RecvData[2]);
 	}else  //没有数据时VT为低电平
 	{
 		LED_RX = 1;//关闭接收信号灯
