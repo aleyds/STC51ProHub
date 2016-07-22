@@ -1,0 +1,16 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+H:\KeilC51\STC51ProHub\trunk\STC15F2K60S2\433Decode\433Decode.uvproj
+Project File Date:  06/23/2016
+
+<h2>Output:</h2>
+Rebuild target '433decode'
+assembling STARTUP.A51...
+compiling main.c...
+code\src\main.c(5): warning C290: missing return value
+linking...
+Program Size: data=9.0 xdata=0 code=16
+".\debug\obj\433Decode" - 0 Error(s), 1 Warning(s).
