@@ -13,6 +13,7 @@ typedef char H_S8;
 typedef int H_BOOL;
 typedef unsigned int WORD;
 typedef unsigned char BYTE;
+typedef unsigned long H_ULONG;
 
 #define H_SUCCESS			(0)
 #define H_FAILURE			(~0)
