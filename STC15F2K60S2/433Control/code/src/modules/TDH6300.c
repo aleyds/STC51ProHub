@@ -5,28 +5,75 @@
 #include "EV1527.h"
 #include <stdarg.h>
 
-static xdata H_U8  g_TDH6300HaveData;
+#define TDH6300_RECV_TIMES			(1)
+#define TDH6300_DATA_LEN			(1)
+typedef struct _Tdh6300Recvst{
+	
+	BYTE _Times;
+	BYTE _pBuff[TDH6300_DATA_LEN];
+}__Tdh6300Recv_t; 
+static xdata __Tdh6300Recv_t  g_Recv;
+static xdata BYTE g_RecvInvalid = 0;//接收在一定时间内被无效，防止接收多次数据
 extern void _delay(unsigned long ms);
 
-static void ReadRFSignal(BYTE *_pDat);
 static _ExternalControl(const BYTE *_pBuf);
-
 
 BYTE _TDH6300ReadByte(void);
 
 void _TDH6300Open(void)
 {
+	memset(&g_Recv, 0, sizeof(__Tdh6300Recv_t));
+}
+
+static void _ResetRecvData(void)
+{
+	memset(&g_Recv, 0, sizeof(__Tdh6300Recv_t));
+}
+
+static void __DebugRecv(void)
+{
+	BYTE i = 0;
+	for(i = 0; i < g_Recv._Times; i++ )
+	{
+		_UartPutDec( g_Recv._pBuff[i]);
+	}
+}
+
+void _TDH6300Recv(BYTE _Recv4Bit)
+{
+	if(g_RecvInvalid)
+	{
+		return ;
+	}
+	g_Recv._pBuff[(g_Recv._Times/2)] |= (_Recv4Bit&0xf)<<(g_Recv._Times%2)*4;
+	g_Recv._Times++;
+	if(g_Recv._Times >= TDH6300_RECV_TIMES)//接收完一个周期的数据
+	{
+		__DebugRecv();
+		_ExternalControl(g_Recv._pBuff);
+		_ResetRecvData();
+		g_RecvInvalid = 1;//接收一次正确数据后,一定时间内不再接收其他数据
+		//__StartTimer();
+		_delay(400);
+		g_RecvInvalid = 0;
+	}
 	
 }
 
+
+
 void _TDH6300Scan(void)
 {
-	BYTE RecvData[3] = {0};
+	///BYTE RecvData[3] = {0};
+	BYTE _RecvTmp = 0;
 	if(TDH6300_VT&0x01) //VT为高电平，说明RF_IN有数据
 	{
 		LED_RX = 0; //点亮接收信号灯
-		ReadRFSignal(RecvData);
-		_ExternalControl(RecvData);
+		//ReadRFSignal(RecvData);
+		_RecvTmp = P1&0xf;
+		
+		_TDH6300Recv(_RecvTmp);
+		
 	}else  //没有数据时VT为低电平
 	{
 		LED_RX = 1;//关闭接收信号灯
@@ -52,24 +99,4 @@ void Int0IRQ_Handler() interrupt 0x0
 	
 }
 
-//接收24字节数据
-static void ReadRFSignal(BYTE *_pDat)
-{
-	BYTE i = 0;
-	for(i = 0; i < 3; i++)
-	{
-		_pDat[i] = _TDH6300ReadByte();
-	}
-}
-
-BYTE _TDH6300ReadByte(void)
-{
-	BYTE i = 0;
-	BYTE _ReadByte = 0;
-	
-	_ReadByte = P1&0xf;
-	
-	_ReadByte |= P1&0xf << 4;
-	return _ReadByte;
-}
 

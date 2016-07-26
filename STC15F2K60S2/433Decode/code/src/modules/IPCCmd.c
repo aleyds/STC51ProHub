@@ -5,7 +5,7 @@
 #include "uart.h"
 #include "IPCCmd.h"
 
-
+#define IPC_CMD_LEN				(10)
 extern void _delay(unsigned long ms);
 extern BYTE _VerifyData(BYTE *_Dat, BYTE len);
 
@@ -26,8 +26,8 @@ void __TDH6300Clear(void)
 void _EV1527Test(void)
 {
 	BYTE buf[2] = {0x12,0x13};
-	_EV1527SendData(buf,2);
-	//_EV1527Send4Bit(0x7);
+	//_EV1527SendData(buf,2);
+	_EV1527Send4Bit(0x7);
 }
 
 void _EV1527Control(const BYTE *DeviceID, BYTE _Dat)
@@ -39,9 +39,10 @@ void _EV1527Control(const BYTE *DeviceID, BYTE _Dat)
 	_EV1527SendData(_SendBuf, 3);
 }
 
-void _IpcBackCmd(const BYTE Type, const BYTE *DeviceID, const BYTE *Data, BYTE _DatLen ,BYTE *_pCmd)
+void _IpcBackCmd( BYTE Type, const BYTE *DeviceID, const BYTE *Data, BYTE _DatLen )
 {
 	BYTE i = 0;
+	BYTE _pCmd[IPC_CMD_LEN] = { 0 };
 	if(_pCmd == H_NULL)
 	{
 		return ;
