@@ -104,7 +104,7 @@ static H_U8  _TDH6300SCAN(void)
 
 static H_U8 _PowerCheck(void)
 {
-	//低电压
+	//充电检测
 	if(!(CHARG_DET &0x1))
 	{
 		LED_CHANGE = 0;
@@ -119,20 +119,23 @@ static void _Sleep(void)
 	PCON = 0x02;
 }
 
-static void EXINT0(void)  interrupt 0 
+static void _SleepInit(void)
 {
-	PCON = 0;
+	WKTCL = 49;//设置唤醒周期为488us*(49+1)=24.4ms
+	WKTCH = 0x80;//使能掉电唤醒定时器
 }
+
+ 
 
 void main()
 {
 	//_DisplayLed(0);
-	EX0 = 1;
-	
+	_SleepInit();
+	EnableAllINT();
 	while(1)
 	{
+		_Sleep();
 		_TDH6300SCAN();
 		_PowerCheck();
-		//_Sleep();
 	}
 }
