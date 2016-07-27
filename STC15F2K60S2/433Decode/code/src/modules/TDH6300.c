@@ -7,10 +7,12 @@
 #include "IPCCmd.h"
 #include <stdarg.h>
 
-#define TDH6300_RECV_TIMES			(1)
-#define TDH6300_DATA_LEN			(1)
+#define TDH6300_RECV_TIMES			(20)
+#define TDH6300_DATA_LEN			(10)
 #define TDH6300_TIMEOUT				(10)
 #define SYNC_BYTE					(0xAA55)
+#define READ_6300_DELAY				(90) //us
+
 typedef struct _Tdh6300Recvst{
 	
 	 BYTE _Times;
@@ -19,7 +21,9 @@ typedef struct _Tdh6300Recvst{
 static xdata __Tdh6300Recv_t  g_Recv;
 static xdata BYTE g_RecvInvalid = 0;//接收在一定时间内被无效，防止接收多次数据
 
-extern void _delay(unsigned long ms);
+extern void _Delayus(unsigned long us);
+extern void _Delayms(unsigned long ms);
+
 
 //static void ReadRFSignal(BYTE *_pDat);
 static void __StartTimer(void);
@@ -88,11 +92,12 @@ void _TDH6300Recv(BYTE _Recv4Bit)
 	{
 		//__DebugRecv();
 		//__RecvOption();
+		
 		__RecvTest();
 		_ResetRecvData();
 		g_RecvInvalid = 1;//接收一次正确数据后,一定时间内不再接收其他数据
 		//__StartTimer();
-		_delay(400);
+		_Delayms(400);
 		g_RecvInvalid = 0;
 	}
 	
@@ -129,8 +134,51 @@ void _TDH6300Scan(void)
 	{
 		LED_RX = 0; //点亮接收信号灯
 		_RecvTmp = P1&0xf;
-		//_UartPutDec(_RecvTmp);
-		_TDH6300Recv(_RecvTmp);
+		_UartPutDec(_RecvTmp);
+		
+		_Delayus(READ_6300_DELAY);
+		
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		_RecvTmp = P1&0xf;
+		_UartPutDec(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
+		
+		//_TDH6300Recv(_RecvTmp);
 		//_UartPutDec( RecvData[1]);
 		//_UartPutDec( RecvData[2]);
 	}else  //没有数据时VT为低电平

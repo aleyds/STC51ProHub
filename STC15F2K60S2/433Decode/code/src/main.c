@@ -2,6 +2,7 @@
 #include "stc15f2k60s2.h"
 #include "GPIO.h"
 #include "base_type.h"
+#include <intrins.h>
 #include "TDH6300.h"
 #include "EV1527.h"
 #include "uart.h"
@@ -9,6 +10,45 @@
 
 #define EnableAllINT()		{EA = 1;}
 
+static void _Delay1us(void)		//@11.0592MHz
+{
+	_nop_();
+	_nop_();
+	_nop_();
+}
+
+static void _Delay1ms(void)		//@11.0592MHz
+{
+	unsigned char i, j;
+
+	_nop_();
+	_nop_();
+	_nop_();
+	i = 11;
+	j = 190;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
+void _Delayus(unsigned long us)
+{
+	while(us--)
+	{
+		_Delay1us();
+	}
+}
+
+void _Delayms(unsigned long ms)
+{
+	while(ms--)
+	{
+		_Delay1ms();
+	}
+}
+
+/*
  void _delay(unsigned long ms)
 {
 	unsigned long i = 0;
@@ -22,6 +62,7 @@
 	}
 
 }
+*/
 
 BYTE _VerifyData(BYTE *_Dat, BYTE len)
 {

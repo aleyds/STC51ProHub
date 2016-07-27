@@ -3,7 +3,8 @@
 #include "EV1527.h"
 #include <stdarg.h>
 
-extern void _delay(unsigned long ms);
+extern void _Delayus(unsigned long us);
+extern void _Delayms(unsigned long ms);
 
 static void __EV1527Reset(void)
 {
@@ -23,7 +24,7 @@ void _Ev1527Open(void)
 void _EV1527Send4Bit(BYTE BitDat)
 {
 	LED_TX = 0;//数据发送灯点亮
-	_delay(1000);
+	_Delayms(1000);
 	EV1527_K0 = (BitDat >> 3)&0x01;
 	EV1527_K1 = (BitDat >> 2)&0x01;
 	EV1527_K2 = (BitDat >> 1)&0x01;
@@ -31,7 +32,7 @@ void _EV1527Send4Bit(BYTE BitDat)
 
 	LED_TX=1;//数据发送灯熄灭
 
-	_delay(200);
+	_Delayms(200);
 	__EV1527Reset();
 
 }
@@ -50,13 +51,13 @@ void _EV1527SendData(BYTE *_pDat, BYTE len)
 {
 	BYTE i = 0;
 	LED_TX = 0;//数据发送灯点亮
-	_delay(1000);
+	_Delayms(1000);
 	
 	for(i = 0; i < len; i++)
 	{
 		_EV1527SendByte(*(_pDat+i));
 	}
 	LED_TX=1;//数据发送灯熄灭
-	_delay(100);
+	_Delayms(100);
 	__EV1527Reset();
 }

@@ -6,20 +6,23 @@
 #include "IPCCmd.h"
 
 #define IPC_CMD_LEN				(10)
-extern void _delay(unsigned long ms);
+
+extern void _Delayus(unsigned long us);
+extern void _Delayms(unsigned long ms);
+
 extern BYTE _VerifyData(BYTE *_Dat, BYTE len);
 
 void __TDH6300Learn(void)
 {
 	LEARNKEY = 0;
-	_delay(200);
+	_Delayms(200);
 	LEARNKEY = 1;
 }
 
 void __TDH6300Clear(void)
 {
 	LEARNKEY = 0;
-	_delay(12000);
+	_Delayms(12000);
 	LEARNKEY = 1;
 }
 
