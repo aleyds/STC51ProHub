@@ -5,11 +5,11 @@
 #include "IPCCmd.h"
 #include <stdarg.h>
 
-#define TDH6300_RECV_TIMES			(20)
-#define TDH6300_DATA_LEN			(10)
+#define TDH6300_RECV_TIMES			(10)  //接收10次每次4Bit  总共接收5Byte数据
+#define TDH6300_DATA_LEN			(5)  //5Byte数据
 #define TDH6300_TIMEOUT				(10)
 #define SYNC_BYTE					(0xAA55)
-#define READ_6300_DELAY				(90) //us
+#define READ_6300_DELAY				(50) //us
 
 typedef struct _Tdh6300Recvst{
 	
@@ -88,42 +88,18 @@ void _TDH6300Recv(BYTE _Recv4Bit)
 	g_Recv._Times++;
 	if(g_Recv._Times >= TDH6300_RECV_TIMES)//接收完一个周期的数据
 	{
-		//__DebugRecv();
-		//__RecvOption();
+		__DebugRecv();
+		__RecvOption();
 		
-		__RecvTest();
+		//__RecvTest();
 		_ResetRecvData();
 		g_RecvInvalid = 1;//接收一次正确数据后,一定时间内不再接收其他数据
-		//__StartTimer();
 		_Delayms(400);
 		g_RecvInvalid = 0;
 	}
 	
 }
 
-/* 
-static void __StopTimer(void)
-{
-	wy_timer_close(_TIMER0);
-}
- */
-
-/* static void __TDH6300TimerCall(void)
-{
-	_UartPutStr(" Tiemr CAll\n\r");
-
-	g_RecvInvalid = 0;//恢复数据无效标志
-	//__StopTimer();
-} */
-/* 
-static void __StartTimer(void)
-{
-	__StopTimer();
-	//wy_timer_open(_TIMER0, TDH6300_TIMEOUT,__TDH6300TimerCall);
-	
-}
-
- */
 
 void _TDH6300Scan(void)
 {
@@ -132,15 +108,11 @@ void _TDH6300Scan(void)
 	{
 		LED_RX = 0; //点亮接收信号灯
 		_RecvTmp = P1&0xf;
-		__UartSend(_RecvTmp);
-		_Delayus(50);
+		_TDH6300Recv(_RecvTmp);
+		_Delayus(READ_6300_DELAY);
 		
-		//_TDH6300Recv(_RecvTmp);
-		//_UartPutDec( RecvData[1]);
-		//_UartPutDec( RecvData[2]);
 	}else  //没有数据时VT为低电平
 	{
-	  //_UartPutDec(0x9);
 		LED_RX = 1;//关闭接收信号灯
 	}
 }
