@@ -136,7 +136,7 @@ void IntUartIRQ_Handler(void) interrupt 4
 	}
 }
 
-static void __UartSend(H_U8 _ch)
+ void __UartSend(H_U8 _ch)
 {
 	while(g_busy);
 	ACC = _ch;
@@ -195,57 +195,5 @@ static void __UartPutHex(H_U32 hex)
 	_UartPutStr(buffer);
 }
 
-/*
-void _UartPrintf(H_U8 *fmt, ...)
-{
 
-	H_U32 vargint = 0;
-	H_U8 *vargpch = H_NULL;
-	H_U8 vargch = 0;
-	H_U8 *pfmt = H_NULL;
-
-	va_list vp;
-	pfmt = fmt;
-	va_start(vp, fmt);
-	while(*pfmt)
-	{
-		if(*pfmt == '%')
-		{
-			switch(*(++pfmt))
-			{
-				case 'c':
-					vargch = va_arg(vp,H_U32);
-					__UartSend((H_U8)vargch);
-					break;
-				case 'd':
-				case 'i':
-					vargint = va_arg(vp, H_U32);
-					DATAZERO(vargint);
-					__UartPutDec(vargint);
-					break;
-				case 's':
-					vargpch = va_arg(vp, H_U8 *);
-					__UartPutStr(vargpch);
-					break;
-				case 'x':
-				case 'X':
-					vargint = va_arg(vp, H_U32);
-					DATAZERO(vargint);
-					__UartPutHex(vargint);
-					break;
-				case '%':
-					__UartSend('%');
-					break;
-			}
-			pfmt++;
-		}
-		else
-		{
-			__UartSend(*pfmt++);
-		}
-	}
-	va_end(vp);
-
-}
-*/
 

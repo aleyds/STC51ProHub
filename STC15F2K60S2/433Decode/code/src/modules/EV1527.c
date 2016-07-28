@@ -1,6 +1,5 @@
 #include "GPIO.h"
 #include "base_type.h"
-#include "EV1527.h"
 #include <stdarg.h>
 
 extern void _Delayus(unsigned long us);

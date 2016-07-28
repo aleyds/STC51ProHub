@@ -19,7 +19,7 @@ typedef enum IPCBack{
 	_BACK_SOS,
 }enIPCBack;
 
-
+void __UartSend(H_U8 _ch);
 void __TDH6300Learn(void);
 void __TDH6300Clear(void);
 void _EV1527Test(void);

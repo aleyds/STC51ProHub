@@ -1,7 +1,6 @@
 #include "GPIO.h"
 #include "base_type.h"
 #include "intrins.h"
-#include "EV1527.h"
 #include "uart.h"
 #include "IPCCmd.h"
 
@@ -9,7 +8,8 @@
 
 extern void _Delayus(unsigned long us);
 extern void _Delayms(unsigned long ms);
-
+extern void _EV1527Send4Bit(BYTE BitDat);
+extern void _EV1527SendData(BYTE *_pDat, BYTE len);
 extern BYTE _VerifyData(BYTE *_Dat, BYTE len);
 
 void __TDH6300Learn(void)
