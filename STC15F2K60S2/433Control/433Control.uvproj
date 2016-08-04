@@ -284,7 +284,7 @@
             <uAregs>0</uAregs>
             <UseInterruptVector>1</UseInterruptVector>
             <Fuzzy>3</Fuzzy>
-            <Optimize>8</Optimize>
+            <Optimize>9</Optimize>
             <WarningLevel>2</WarningLevel>
             <SizeSpeed>1</SizeSpeed>
             <ObjectExtend>1</ObjectExtend>
@@ -380,11 +380,6 @@
               <FileName>IPCCmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\code\src\modules\IPCCmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>EV1527.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\code\src\modules\EV1527.c</FilePath>
             </File>
           </Files>
         </Group>

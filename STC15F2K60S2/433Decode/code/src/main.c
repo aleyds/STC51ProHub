@@ -109,7 +109,7 @@ void _EV1527SendByte(BYTE _Byte)
 	
 }
 /*******************Sleep*********************/
-
+/*
 static void _Sleep(void)
 {
 	PCON = 0x02;
@@ -120,13 +120,14 @@ static void _SleepInit(void)
 	WKTCL = 49;//设置唤醒周期为488us*(49+1)=24.4ms
 	WKTCH = 0x80;//使能掉电唤醒定时器
 }
+*/
 
 void main()
 {
 	//char xdata print[] = "Will Come To STC \n\r";
 	//_TDH6300Open();
-	_Ev1527Init();
 	_UartOpen();
+	_Ev1527Init();
 	EnableAllINT();
 	LED_TX = 1;
 	LED_RX = 1;
@@ -134,7 +135,7 @@ void main()
 	
 	while(1)
 	{
-		//_IPCCmdRecv();
+		_IPCCmdRecv();
 		_TDH6300Scan();
 		
 	}

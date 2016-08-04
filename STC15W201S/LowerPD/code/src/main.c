@@ -1,5 +1,6 @@
 
 #include "GPIO.h"
+#include "intrins.h"
 #include "base_type.h"
 
 #define LOW_POWER_STEP		(200)
@@ -8,16 +9,26 @@
 #define EnableAllINT()		{EA = 1;}
 static bit g_MotorTurn = 0;
 
+static void __Delay1ms()		//@11.0592MHz
+{
+	unsigned char i, j;
+
+	_nop_();
+	_nop_();
+	_nop_();
+	i = 11;
+	j = 190;
+	do
+	{
+		while (--j);
+	} while (--i);
+}
+
 static  void _delay(H_ULONG ms)
 {
-	H_ULONG i = 0;
-	H_ULONG j = 0;
-	for(i = ms; i> 0; i--)
+	while(ms--)
 	{
-		for(j = 110; j > 0; j--)
-		{
-			;
-		}
+		__Delay1ms();
 	}
 
 }
@@ -102,7 +113,7 @@ static H_U8  _TDH6300SCAN(void)
 	return 0;
 }
 
-static H_U8 _PowerCheck(void)
+static void _PowerCheck(void)
 {
 	//充电检测
 	if(!(CHARG_DET &0x1))

@@ -28,18 +28,12 @@ void __TDH6300Clear(void)
 
 void _EV1527Test(void)
 {
-	BYTE buf[2] = {0x12,0x13};
-	//_EV1527SendData(buf,2);
 	_EV1527Send4Bit(0x7);
 }
 
 void _EV1527Control(const BYTE *DeviceID, BYTE _Dat)
 {
-	BYTE _SendBuf[3] = { 0 };
-	_SendBuf[0] = (DeviceID[0] << 4)|(DeviceID[1] >> 4);
-	_SendBuf[1] = (DeviceID[1] << 4)|(DeviceID[2] >> 4);
-	_SendBuf[2] = (DeviceID[2] << 4)|(_Dat&0xf);
-	_EV1527SendData(_SendBuf, 3);
+	_EV1527Send4Bit(_Dat);
 }
 
 void _IpcBackCmd( BYTE Type, const BYTE *DeviceID, const BYTE *Data, BYTE _DatLen )

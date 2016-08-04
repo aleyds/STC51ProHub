@@ -11,7 +11,8 @@ static xdata H_U8 g_RecvIndex = 0;
 
 extern BYTE _VerifyData(BYTE *_Dat, BYTE len);
 static void __UartSend(H_U8 _ch);
-
+#define S1_S0 0x40              //P_SW1.6
+#define S1_S1 0x80              //P_SW1.7
 
 #define DATAZERO(data)\
 do{\
@@ -35,7 +36,11 @@ void _UartOpen(void)
 	T2H = (65536 - (SOC_FREQ/4/UART_BAUD))>>8;
 	AUXR = 0x14;
 	AUXR |= 0x01;
-	//AUXR1 |= (0x2<<2);//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
+	//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
+	ACC = P_SW1;
+	ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=1
+	ACC |= S1_S1;               //(P1.6/RxD_3, P1.7/TxD_3)
+	P_SW1 = ACC;  
 	ES = 1;
 	g_RecvIndex = 0;
 }

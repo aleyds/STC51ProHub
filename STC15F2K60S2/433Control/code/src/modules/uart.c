@@ -11,7 +11,8 @@ static xdata H_U8 g_RecvIndex = 0;
 
 extern BYTE _VerifyData(BYTE *_Dat, BYTE len);
 static void __UartSend(H_U8 _ch);
-
+#define S1_S0 0x40              //P_SW1.6
+#define S1_S1 0x80              //P_SW1.7
 
 #define DATAZERO(data)\
 do{\
@@ -35,7 +36,11 @@ void _UartOpen(void)
 	T2H = (65536 - (SOC_FREQ/4/UART_BAUD))>>8;
 	AUXR = 0x14;
 	AUXR |= 0x01;
-	//AUXR1 |= (0x2<<2);//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
+	//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
+	/* ACC = P_SW1;
+	ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=1
+	ACC |= S1_S1;               //(P1.6/RxD_3, P1.7/TxD_3)
+	P_SW1 = ACC;   */
 	ES = 1;
 	g_RecvIndex = 0;
 }
@@ -74,24 +79,44 @@ static void _RecvUart(H_U8 Byte)
 	}
 }
 
-void _CommandData(void)
+static void __IpcStuParse(_IpcCmd_t *_pIpcCmd)
 {
+	_pIpcCmd->len = g_RecvBuff[2];
+	_pIpcCmd->type = g_RecvBuff[3];
+	memcpy(_pIpcCmd->device_id, &(g_RecvBuff[4]),3);
+	if((_pIpcCmd->len > 5) && (_pIpcCmd->len < 7))
+	{
+		memcpy(_pIpcCmd->_pdata, &(g_RecvBuff[7]),2);
+	}
+}
+
+void _IPCCmdRecv(void)
+{
+	_IpcCmd_t _stIpcCmd;
 	if(g_RecvOver)
 	{
-		switch(g_RecvBuff[3])
+		memset(&_stIpcCmd, 0, sizeof(_IpcCmd_t));
+		__IpcStuParse(&_stIpcCmd);
+		switch(_stIpcCmd.type)
 		{
-			case 0:
+			case _TYPE_6300_LEARN:
 				_UartPutStr("Study \n\r");
 				__TDH6300Learn();
 				break;
-			case 1:
+			case _TYPE_6300_CLEAR:
 				_UartPutStr("Clear \n\r");
 				__TDH6300Clear();
 			    break;
-
+			 case _TYPE_1527_TEST:
+			 	_UartPutStr("EV1527 \n\r");
+			 	_EV1527Test();
+			 	break;
+			 /* case _TYPE_1527_CONTROL:
+			 	_EV1527Control(_stIpcCmd.device_id,_stIpcCmd._pdata[0]);
+			 	break; */
 			default:
 				_UartPutStr("Other: \n\r");
-				_UartPutDec(g_RecvBuff[3]);
+				_UartPutDec(_stIpcCmd.type);
 				break;
 		}
 		__ClearBuffer();
@@ -116,7 +141,7 @@ void IntUartIRQ_Handler(void) interrupt 4
 	}
 }
 
-static void __UartSend(H_U8 _ch)
+ void __UartSend(H_U8 _ch)
 {
 	while(g_busy);
 	ACC = _ch;
@@ -175,57 +200,5 @@ static void __UartPutHex(H_U32 hex)
 	_UartPutStr(buffer);
 }
 
-/*
-void _UartPrintf(H_U8 *fmt, ...)
-{
 
-	H_U32 vargint = 0;
-	H_U8 *vargpch = H_NULL;
-	H_U8 vargch = 0;
-	H_U8 *pfmt = H_NULL;
-
-	va_list vp;
-	pfmt = fmt;
-	va_start(vp, fmt);
-	while(*pfmt)
-	{
-		if(*pfmt == '%')
-		{
-			switch(*(++pfmt))
-			{
-				case 'c':
-					vargch = va_arg(vp,H_U32);
-					__UartSend((H_U8)vargch);
-					break;
-				case 'd':
-				case 'i':
-					vargint = va_arg(vp, H_U32);
-					DATAZERO(vargint);
-					__UartPutDec(vargint);
-					break;
-				case 's':
-					vargpch = va_arg(vp, H_U8 *);
-					__UartPutStr(vargpch);
-					break;
-				case 'x':
-				case 'X':
-					vargint = va_arg(vp, H_U32);
-					DATAZERO(vargint);
-					__UartPutHex(vargint);
-					break;
-				case '%':
-					__UartSend('%');
-					break;
-			}
-			pfmt++;
-		}
-		else
-		{
-			__UartSend(*pfmt++);
-		}
-	}
-	va_end(vp);
-
-}
-*/
 
