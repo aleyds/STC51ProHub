@@ -19,6 +19,7 @@ typedef struct _Tdh6300Recvst{
 static xdata __Tdh6300Recv_t  g_Recv;
 static xdata BYTE g_RecvInvalid = 0;//接收在一定时间内被无效，防止接收多次数据
 static xdata BYTE g_isDefense = 0;
+static xdata BYTE g_IOControlType = 0;
 
 extern void _Delayus(unsigned long us);
 extern void _Delayms(unsigned long ms);
@@ -61,12 +62,14 @@ static void __RecvOption(void)
 		DeviceID[1] = ((g_Recv._pBuff[3]>>4)&0xf) | (((g_Recv._pBuff[3])&0xf)<<4);
 		DeviceID[2] = (g_Recv._pBuff[4])&0xf;
 		StatusType = (g_Recv._pBuff[4]>>4)&0xf;
-		__UartSend(StatusType);
+		//__UartSend(StatusType);
+		_IpcBackCmd(StatusType,DeviceID, H_NULL, 0);
 		GPIO0 = (StatusType>>3)&0x01;
 		GPIO1 = (StatusType>>2)&0x01;
 		GPIO2 = (StatusType>>1)&0x01;
 		GPIO3 = (StatusType)&0x01;
-		_EV1527Send4Bit(StatusType);
+		g_IOControlType = StatusType;
+		
 	}
 }
 
@@ -98,6 +101,14 @@ void _TDH6300Recv(BYTE _Recv4Bit)
 	
 }
 
+static void _Ev1527FeedBack(void){
+	if(g_IOControlType != 0){
+		_Delayms(3000);
+		_EV1527Send4Bit(g_IOControlType);
+		g_IOControlType = 0;
+	}
+}
+
 
 void _TDH6300Scan(void)
 {
@@ -113,6 +124,8 @@ void _TDH6300Scan(void)
 	{
 		LED_RX = 1;//关闭接收信号灯
 	}
+	
+	_Ev1527FeedBack();
 }
 
 

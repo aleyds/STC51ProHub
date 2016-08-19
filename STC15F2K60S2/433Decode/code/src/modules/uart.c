@@ -70,7 +70,7 @@ static void _RecvUart(H_U8 Byte)
 	g_RecvIndex++;
 	if((g_RecvIndex) >= (g_RecvBuff[2]+3))
 	{
-		if(_VerifyData(g_RecvBuff, (g_RecvBuff[2]+2)) == g_RecvBuff[g_RecvBuff[2]+2])
+		//if(_VerifyData(g_RecvBuff, (g_RecvBuff[2]+2)) == g_RecvBuff[g_RecvBuff[2]+2])
 		{
 			g_RecvOver = 1;
 			

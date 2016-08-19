@@ -2,8 +2,8 @@
 #define __GPIO_H__
 #include "stc15f2k60s2.h"
 //LED
-sbit  LED_TX=P2^6;  //发送数据指示灯
-sbit  LED_RX=P2^7;  //接收数据指示灯
+sbit  LED_TX=P3^3;  //发送数据指示灯
+sbit  LED_RX=P5^5;  //接收数据指示灯
 
 //TDH6300译码器
 sbit TDH6300_D0=P1^0; //译码输出

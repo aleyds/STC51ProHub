@@ -10,7 +10,7 @@
 #define EnableAllINT()		{EA = 1;}
 
 /*****************»Ìº˛—” ±≥Ã–Ú**********************/
-static void _Delay1us(void)		//@11.0592MHz
+static void _Delay1us(void)		//@27.000MHz
 {
 	unsigned char i;
 
@@ -19,7 +19,7 @@ static void _Delay1us(void)		//@11.0592MHz
 	while (--i);
 }
 
-static void _Delay1ms(void)		//@11.0592MHz
+static void _Delay1ms(void)		//@27.000MHz
 {
 	unsigned char i, j;
 

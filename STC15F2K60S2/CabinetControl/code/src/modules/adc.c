@@ -9,7 +9,7 @@ extern void _Delayms(unsigned int ms);
 ----------------------------*/
 void _ADCInit()
 {
-    P1ASF = 0xff;                   //设置P1口为AD口
+    P1ASF = 0x01;                   //设置P1.0口为AD口
     ADC_RES = 0;                    //清除结果寄存器
     ADC_CONTR = ADC_POWER | ADC_SPEEDLL;
     _Delayms(2);                       //ADC上电并延时

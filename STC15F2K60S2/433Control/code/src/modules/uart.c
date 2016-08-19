@@ -37,10 +37,10 @@ void _UartOpen(void)
 	AUXR = 0x14;
 	AUXR |= 0x01;
 	//将串口1切换到P1.6 RX  P1.7 TX默认在  P3.0 RX  P3.1 TX,调试采用默认，实际需要切换
-	/* ACC = P_SW1;
+	ACC = P_SW1;
 	ACC &= ~(S1_S0 | S1_S1);    //S1_S0=0 S1_S1=1
 	ACC |= S1_S1;               //(P1.6/RxD_3, P1.7/TxD_3)
-	P_SW1 = ACC;   */
+	P_SW1 = ACC;   
 	ES = 1;
 	g_RecvIndex = 0;
 }
@@ -70,7 +70,7 @@ static void _RecvUart(H_U8 Byte)
 	g_RecvIndex++;
 	if((g_RecvIndex) >= (g_RecvBuff[2]+3))
 	{
-		if(_VerifyData(g_RecvBuff, (g_RecvBuff[2]+2)) == g_RecvBuff[g_RecvBuff[2]+2])
+		//if(_VerifyData(g_RecvBuff, (g_RecvBuff[2]+2)) == g_RecvBuff[g_RecvBuff[2]+2])
 		{
 			g_RecvOver = 1;
 			

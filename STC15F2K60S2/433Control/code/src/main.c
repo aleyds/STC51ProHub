@@ -10,7 +10,7 @@
 #define EnableAllINT()		{EA = 1;}
 
 /*****************软件延时程序**********************/
-static void _Delay1us(void)		//@11.0592MHz
+static void _Delay1us(void)		//@27.000MHz
 {
 	unsigned char i;
 
@@ -19,7 +19,7 @@ static void _Delay1us(void)		//@11.0592MHz
 	while (--i);
 }
 
-static void _Delay1ms(void)		//@11.0592MHz
+static void _Delay1ms(void)		//@27.000MHz
 {
 	unsigned char i, j;
 
@@ -121,6 +121,8 @@ static void _SleepInit(void)
 	WKTCH = 0x80;//使能掉电唤醒定时器
 }
 */
+
+
 
 void main()
 {

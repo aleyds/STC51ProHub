@@ -88,7 +88,7 @@ static void __Timer0Callback(void)
 		g_TimerStop = 1;
 	}else 
 	{
-		RELAY_C = 0;
+		RELAY_C = 1;
 	}
 	
 }
@@ -114,6 +114,7 @@ static void __MotorStop(void)
 		_TimerStart(0);
 		g_TimerStop = 0;
 	}
+	SendString("__MotorStop ");
 	
 	RELAY_A = 0;
 	RELAY_B = 0;
@@ -132,6 +133,7 @@ static void __MotorStart(H_U8 _Turn)
 		RELAY_A = 0;
 		RELAY_B = 1;
 	}
+	SendString("__MotorStart ");
 
 	g_CurrrentData = _ADCResultAverage();
 	_TimerClose(0);//关闭外灯后关闭定时器
@@ -180,10 +182,10 @@ static H_S8 _SwitchC(void)
 
 static H_S8 _TouchSwitch(void)
 {
-	if((!T_SWITCH&0x01)) //触摸开关，低电平有效
+	if((T_SWITCH&0x01)) //触摸开关，低电平有效
 	{
 		_Delayms(10);//按键抖动
-		if(!(T_SWITCH&0x01))//开关真正闭合
+		if((T_SWITCH&0x01))//开关真正闭合
 		{
 			//发出滴的声音
 			return 1;
@@ -204,18 +206,23 @@ static H_U16 _ADCGetPoint(H_U16 current)
 //触摸板按键，蜂鸣器响
 static void _TouchAlarm()
 {
-	ALARM_SWITCH=0;
+	ALARM_SWITCH=1;
 	_Delayms(500);
-	EXTERNAL_LED=1;
+	ALARM_SWITCH=0;
 }
 
 static BYTE _ElectricityDect(void)
 {
 	WORD _AdcData = 0;
-	_AdcData = _ADCGetResult(0);//P1.0口为电流检测口
+	_AdcData = _ADCResultAverage();//P1.0口为电流检测口
 	_Delayms(200);//测试延时
-	if((g_CurrrentData != 0 )&&(_AdcData > (g_CurrrentData+_ADCGetPoint(g_CurrrentData))))
+	
+	
+	if((g_CurrrentData != 0 )&&((_AdcData > (g_CurrrentData+2)) || (_AdcData < (g_CurrrentData - 2))))
 	{
+		SendString("Electricity test");
+		
+		g_CurrrentData = _AdcData;
 		return 1;//电流超过阈值
 	}
 	return 0;//电流正常
@@ -283,7 +290,7 @@ static void _EventHandler(void)
 		g_RunningStatus = _RUNNING_A_STOP;
 		//1号开关LED熄灭
 		LEDSwitchA(0);
-		//SendPrintf("Switch A PullDown \n\r");
+		SendPrintf("Switch A PullDown \n\r");
 	}else if(!_SwitchA())
 	{
 		LEDSwitchA(1);
@@ -295,7 +302,7 @@ static void _EventHandler(void)
 		//停止电机运动，状态为_RUNNING_A_STOP
 		__MotorStop();
 		g_RunningStatus = _RUNNING_B_STOP;
-		//SendPrintf("Switch B PullDown \n\r");
+		SendPrintf("Switch B PullDown \n\r");
 	
 	}
 	
@@ -304,7 +311,7 @@ static void _EventHandler(void)
 
 		g_RunningStatus = _RUNNING_BTOA;
 		__MotorStart(0);
-		//SendString("Switch C PullDown \n\r");
+		SendString("Switch C PullDown \n\r");
 	}
 	
 	if( (_ElectricityDect() == 1)&& (g_RunningStatus == _RUNNING_BTOA))//从A向B运动过程中，电流瞬间增大5%,电机反转
@@ -312,7 +319,7 @@ static void _EventHandler(void)
 		//反转为向B点运动， 状态为 _RUNNING_ATOB
 		g_RunningStatus = _RUNNING_ATOB;
 		__MotorStart(1);
-		//SendString("Electricity Gain\n\r");
+		SendString("Electricity Gain\n\r");
 	}
 }
 
@@ -332,21 +339,25 @@ static void _SleepInit(void)
 
 static void _IOInit()
 {
-	P1M0 = 0x00;//设置P1所有端口为准双向口
+	//P0M0 = 0x00;//设置P1所有端口为准双向口
+	//P0M1 = 0x00;
+	P1M0 = 0xff;//设置P1所有端口为准双向口
 	P1M1 = 0x00;
 	P2M0 = 0x00;//设置P1所有端口为准双向口
 	P2M1 = 0x00;
 	P3M0 = 0x00;//设置P3所有端口为准双向口
 	P3M1 = 0x00;
-	P4M0 = 0x00;//设置P3所有端口为准双向口
-	P4M1 = 0x00;
+	//P4M0 = 0x00;//设置P3所有端口为准双向口
+	//P4M1 = 0x00;
 	P5M0 = 0x00;//设置P3所有端口为准双向口
 	P5M1 = 0x00;
-	P6M0 = 0x00;//设置P3所有端口为准双向口
-	P6M1 = 0x00;
-	P7M0 = 0x00;//设置P3所有端口为准双向口
-	P7M1 = 0x00;
-	RELAY_C = 0;
+	//P6M0 = 0x00;//设置P3所有端口为准双向口
+	//P6M1 = 0x00;
+	//P7M0 = 0x00;//设置P3所有端口为准双向口
+	//P7M1 = 0x00;
+	RELAY_C = 0;//紫外灯关闭
+	ALARM_SWITCH = 0;//蜂鸣器关闭
+	T_SWITCH = 0;//触摸开关拉低，高电平触发
 }
 
 
@@ -359,7 +370,8 @@ void main()
 		_ADCInit();//ADC初始化
 		//_SleepInit();//低功耗模式，暂时不使用
 		SendString("WillCome to 24V \n\r");
-		_TouchAlarm();
+		//_TouchAlarm();//蜂鸣器开机提示
+	
 		
 		g_RunningStatus = _RUNNING_INIT;
 		_MotorStart(0);//启动向A点运动
@@ -370,10 +382,10 @@ void main()
 		while(1)
 		{
 			//正常应用程序模式
-			/*
-			_Sleep();//低功耗模式，暂时不使用
+			
+			//_Sleep();//低功耗模式，暂时不使用
 			_EventHandler();
-			*/
+			
 
 			//使用到的IO口测试
 			/*
@@ -396,21 +408,25 @@ void main()
 			
 			
 			//全部GPIO测试代码
-			P0 = 0xFF;
-			P1 = 0xFF;
-			P2 = 0xFF;
-			P3 = 0xFF;
-			P4 = 0xFF;
-			P5 = 0xFF;
-			_Delayms(3000);
-			P0 = 0x00;
-			P1 = 0x00;
-			P2 = 0x00;
-			P3 = 0x00;
-			P4 = 0x00;
-			P5 = 0x00;
-			_Delayms(3000); 
-			SendString("Looping \n\r"); 
+			//P0 = 0xFF;
+			//P1 = 0xFF;
+			//P2 = 0xFF;
+			//P3 = 0xEF;
+			//P4 = 0xFF;
+			//P5 = 0xFF;
+			//P6 = 0xFF;
+			//P7 = 0xFF;
+			//_Delayms(3000);
+			//P0 = 0x00;
+			//P1 = 0x00;
+			//P2 = 0x00;
+			//P3 = 0x00;
+			//P4 = 0x00;
+			//P5 = 0x00;
+			//P6 = 0x00;
+			//P7 = 0x00;
+			//_Delayms(3000); 
+			//SendString("Looping \n\r"); 
 
 		}
 }

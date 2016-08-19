@@ -31,7 +31,7 @@ void _EV1527Send4Bit(BYTE BitDat)
 
 	LED_TX=1;//Êý¾Ý·¢ËÍµÆÏ¨Ãð
 
-	_Delayms(200);
+	_Delayms(500);
 	__EV1527Reset();
 
 }

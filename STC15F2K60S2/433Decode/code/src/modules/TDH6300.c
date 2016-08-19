@@ -65,24 +65,7 @@ static void __RecvOption(void)
 		DeviceID[2] = (g_Recv._pBuff[4])&0xf;
 		StatusType = (g_Recv._pBuff[4]>>4)&0xf;
 		_IpcBackCmd(StatusType,DeviceID, H_NULL, 0);//完全透传
-		//命令转码
-		/* switch(StatusType)
-		{
-			case _TDH_CMD_DOPLOY:
-				g_isDefense = 1;
-				_IpcBackCmd(StatusType,DeviceID, H_NULL, 0);
-				break;
-			case _TDH_CMD_DISARM:
-			    g_isDefense = 0;
-				_IpcBackCmd(StatusType,DeviceID, H_NULL, 0);
-				break;
-			default:
-				if(g_isDefense)
-				{
-					_IpcBackCmd(StatusType,DeviceID, H_NULL, 0);
-				}
-				break;
-		} */
+		
 	}
 }
 
@@ -131,35 +114,5 @@ void _TDH6300Scan(void)
 	}
 }
 
-/*
-void Int0IRQ_Handler() interrupt 0
-{	
-	//char xdata print[50] = "TDH6300 VT\n\r";
 
-	_UartPutStr("INT0 IRQ \n\r");
-	if(TDH6300_VT&0x01) //VT为高电平，说明RF_IN有数据
-	{
-		LED_RX = 0; //点亮接收信号灯
-		//ReadRFSignal(RecvData);
-		_UartPutDec( P1&0xf);
-		//_UartPutDec( RecvData[1]);
-		//_UartPutDec( RecvData[2]);
-	}else  //没有数据时VT为低电平
-	{
-		LED_RX = 1;//关闭接收信号灯
-	}
-	
-}
-*/
-
-BYTE _TDH6300ReadByte(void)
-{
-	BYTE i = 0;
-	BYTE _ReadByte = 0;
-	
-	_ReadByte = P1&0xf;
-	
-	_ReadByte |= P1&0xf << 4;
-	return _ReadByte;
-}
 

@@ -2,7 +2,7 @@
 #define __UART_H__
 
 #define SOC_FREQ			(26975000L)//(11051000L)//(18432000L)
-#define UART_BAUD			(115200)
+#define UART_BAUD			(9600)
 
 #define NONE_PARITY			(0)
 #define ODD_PARITY			(1)
