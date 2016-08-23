@@ -39,7 +39,7 @@ void _Delayms(unsigned int ms)
 }
 
 
-#define TIME_15MIN		(1*5*1000)
+#define TIME_15MIN		(15*60*1000)
 
 #define TOUCH_RESTORE_TIME		(3)
 static xdata H_U8 g_TouchEnable = 0;

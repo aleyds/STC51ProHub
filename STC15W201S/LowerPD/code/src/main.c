@@ -5,6 +5,7 @@
 
 #define LOW_POWER_STEP		(200)
 #define LOW_POWER_TIMER		(15)
+#define MOTOR_DEFAULT_TURN		(1000)
 
 #define EnableAllINT()		{EA = 1;}
 static bit g_MotorTurn = 0;
@@ -39,7 +40,7 @@ static void _MotorStop(void)
 	MOTOR_PORTB = 0;
 }
 
-static void _MotorTurn(H_U8 _Direct)
+static void _MotorTurn(H_U8 _Direct,H_U32 time)
 {
 	if(_Direct)
 	{
@@ -50,7 +51,7 @@ static void _MotorTurn(H_U8 _Direct)
 		MOTOR_PORTA = 0;
 		MOTOR_PORTB = 1;
 	}
-	_delay(1000);
+	_delay(time);
 	_MotorStop();
 }
 
@@ -87,6 +88,7 @@ static void _LowPowerAlarm(void)
 
 static H_U8  _TDH6300SCAN(void)
 {
+	H_U32 motorTime = MOTOR_DEFAULT_TURN;
 	if(TDH6300_VT&0x01)
 	{
 		if(TDH6300_JDQ&0x01)
@@ -96,15 +98,16 @@ static H_U8  _TDH6300SCAN(void)
 			if((!(LOW_POWER_DECT &0x1)) && (CHARG_DET&0x1))
 			{
 				_LowPowerAlarm();
-				g_MotorTurn = 1;
+				//g_MotorTurn = 1;
+				motorTime += MOTOR_DEFAULT_TURN; 
 			}
 			if(g_MotorTurn)
 			{
-				_MotorTurn(0);
+				_MotorTurn(0,motorTime);
 				g_MotorTurn = 0;
 			}else
 			{
-				_MotorTurn(1);
+				_MotorTurn(1,motorTime);
 				g_MotorTurn = 1;
 			}
 			return 1;
@@ -136,11 +139,16 @@ static void _SleepInit(void)
 	WKTCH = 0x80;//使能掉电唤醒定时器
 }
 
- 
+static void _GpioInit()
+{
+    P3M0 = 0x00;
+    P3M1 = 0x80;
+}
 
 void main()
 {
 	//_DisplayLed(0);
+	_GpioInit();
 	_SleepInit();
 	EnableAllINT();
 	while(1)
