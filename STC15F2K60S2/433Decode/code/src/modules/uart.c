@@ -100,15 +100,15 @@ void _IPCCmdRecv(void)
 		switch(_stIpcCmd.type)
 		{
 			case _TYPE_6300_LEARN:
-				_UartPutStr("Study \n\r");
+			//	_UartPutStr("Study \n\r");
 				__TDH6300Learn();
 				break;
 			case _TYPE_6300_CLEAR:
-				_UartPutStr("Clear \n\r");
+				//_UartPutStr("Clear \n\r");
 				__TDH6300Clear();
 			    break;
 			 case _TYPE_1527_TEST:
-			 	_UartPutStr("EV1527 \n\r");
+			 	//_UartPutStr("EV1527 \n\r");
 			 	_EV1527Test();
 			 	break;
 			 case _TYPE_1527_CONTROL:
@@ -131,7 +131,7 @@ void IntUartIRQ_Handler(void) interrupt 4
 	{
 		RI = 0;
 		tmp = SBUF;
-		_RecvUart(tmp);
+		//_RecvUart(tmp);
 		//SBUF = tmp;
 	}
 	if(TI)
