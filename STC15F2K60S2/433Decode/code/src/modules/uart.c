@@ -131,7 +131,7 @@ void IntUartIRQ_Handler(void) interrupt 4
 	{
 		RI = 0;
 		tmp = SBUF;
-		//_RecvUart(tmp);
+		_RecvUart(tmp);
 		//SBUF = tmp;
 	}
 	if(TI)

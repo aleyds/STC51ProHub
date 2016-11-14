@@ -64,6 +64,9 @@ static void __RecvOption(void)
 		DeviceID[1] = ((g_Recv._pBuff[3]>>4)&0xf) | (((g_Recv._pBuff[3])&0xf)<<4);
 		DeviceID[2] = (g_Recv._pBuff[4])&0xf;
 		StatusType = (g_Recv._pBuff[4]>>4)&0xf;
+		if((DeviceID[0] == 0) && (DeviceID[1] == 0) && (DeviceID[2] == 0)){
+			return;
+		}
 		_IpcBackCmd(StatusType,DeviceID, H_NULL, 0);//ÍêÈ«Í¸´«
 		
 	}
